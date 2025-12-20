@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:healthy_scanner/controller/navigation_controller.dart';
 import 'package:healthy_scanner/theme/app_colors.dart';
 import 'package:healthy_scanner/theme/theme_extensions.dart';
@@ -13,6 +14,16 @@ import 'package:healthy_scanner/controller/auth_controller.dart';
 /// ------------------------------------------------------------
 class LoginMainView extends StatelessWidget {
   const LoginMainView({super.key});
+
+  static const String supportUrl =
+      'https://useful-maxilla-d92.notion.site/FAQ-2cf90ccf2e81805a8c86c8ef101f2ddb?source=copy_link';
+
+  Future<void> _openSupportCenter() async {
+    final uri = Uri.parse(supportUrl);
+    if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
+      debugPrint('❌ Failed to open support url: $supportUrl');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -98,11 +109,7 @@ class LoginMainView extends StatelessWidget {
                   /// 문의 링크 텍스트
                   GestureDetector(
                     behavior: HitTestBehavior.opaque,
-                    onTap: () {
-                      // TODO: 문의 페이지 연결 (예: 이메일, 피드백 폼 등)
-                      // 임시 개발용: 로그인 없이 온보딩으로 연결
-                      nav.goToOnboardingAgree();
-                    },
+                    onTap: _openSupportCenter,
                     child: Padding(
                       padding: const EdgeInsets.all(6),
                       child: Text(

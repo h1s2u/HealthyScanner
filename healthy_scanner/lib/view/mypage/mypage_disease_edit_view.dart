@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:healthy_scanner/constants/onboarding_constants.dart';
 import 'package:healthy_scanner/controller/mypage_controller.dart';
 import '../../controller/navigation_controller.dart';
 import '../../component/tag_chip_toggle.dart';
@@ -20,7 +21,7 @@ class _MyPageDiseaseEditViewState extends State<MyPageDiseaseEditView> {
   late Set<String> selectedDiseases;
 
   final List<String> diseases = [
-    '건강 질환이 없어요',
+    OnboardingConstants.noDiseaseLabel,
     '고혈압',
     '간질환',
     '통풍',
@@ -38,6 +39,21 @@ class _MyPageDiseaseEditViewState extends State<MyPageDiseaseEditView> {
     selectedDiseases = {
       ...myPageController.currentConditionsKorean,
     };
+  }
+
+  void _onDiseaseSelected(String disease, bool isSelected) {
+    setState(() {
+      if (isSelected) {
+        if (disease == OnboardingConstants.noDiseaseLabel) {
+          selectedDiseases = {OnboardingConstants.noDiseaseLabel};
+        } else {
+          selectedDiseases.remove(OnboardingConstants.noDiseaseLabel);
+          selectedDiseases.add(disease);
+        }
+      } else {
+        selectedDiseases.remove(disease);
+      }
+    });
   }
 
   @override
@@ -89,24 +105,7 @@ class _MyPageDiseaseEditViewState extends State<MyPageDiseaseEditView> {
                         key: ValueKey('$disease-$isSelected'),
                         label: disease,
                         initialSelected: isSelected,
-                        onChanged: (v) {
-                          setState(() {
-                            if (disease == '건강 질환이 없어요' && v) {
-                              selectedDiseases = {'건강 질환이 없어요'};
-                            } else {
-                              if (selectedDiseases
-                                  .contains('건강 질환이 없어요')) {
-                                selectedDiseases
-                                    .remove('건강 질환이 없어요');
-                              }
-                              if (v) {
-                                selectedDiseases.add(disease);
-                              } else {
-                                selectedDiseases.remove(disease);
-                              }
-                            }
-                          });
-                        },
+                        onChanged: (v) => _onDiseaseSelected(disease, v),
                       );
                     }).toList(),
                   ),

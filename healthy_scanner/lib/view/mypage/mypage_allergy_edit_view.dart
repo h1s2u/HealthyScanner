@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:healthy_scanner/controller/mypage_controller.dart';
+import 'package:healthy_scanner/constants/onboarding_constants.dart';
 import '../../controller/navigation_controller.dart';
+import '../../controller/mypage_controller.dart';
 import '../../component/tag_chip_toggle.dart';
 import '../../component/bottom_button.dart';
 import '../../theme/app_colors.dart';
@@ -43,6 +44,21 @@ class _MyPageAllergyEditViewState extends State<MyPageAllergyEditView> {
     selectedAllergies = {
       ...myPageController.currentAllergiesKorean,
     };
+  }
+
+  void _onAllergySelected(String allergy, bool isSelected) {
+    setState(() {
+      if (isSelected) {
+        if (allergy == OnboardingConstants.noAllergyLabel) {
+          selectedAllergies = {OnboardingConstants.noAllergyLabel};
+        } else {
+          selectedAllergies.remove(OnboardingConstants.noAllergyLabel);
+          selectedAllergies.add(allergy);
+        }
+      } else {
+        selectedAllergies.remove(allergy);
+      }
+    });
   }
 
   @override
@@ -94,22 +110,7 @@ class _MyPageAllergyEditViewState extends State<MyPageAllergyEditView> {
                         key: ValueKey('$allergy-$isSelected'),
                         label: allergy,
                         initialSelected: isSelected,
-                        onChanged: (v) {
-                          setState(() {
-                            if (allergy == '없어요' && v) {
-                              selectedAllergies = {'없어요'};
-                            } else {
-                              if (selectedAllergies.contains('없어요')) {
-                                selectedAllergies.remove('없어요');
-                              }
-                              if (v) {
-                                selectedAllergies.add(allergy);
-                              } else {
-                                selectedAllergies.remove(allergy);
-                              }
-                            }
-                          });
-                        },
+                        onChanged: (v) => _onAllergySelected(allergy, v),
                       );
                     }).toList(),
                   ),
